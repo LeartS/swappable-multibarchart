@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html ng-app="chart">
+  <head>
+    <meta charset="utf-8"></meta>
+    <title>Leaflet.heat demo</title>
+    <script src="vendor/angular.js"></script>
+    <script src="vendor/d3.min.js"></script>
+    <script src="vendor/nv.d3.js"></script>
+    <script src="vendor/angular-nvd3.js"></script>
+    <script src="vendor/underscore.js"></script>
+    <!-- <link rel="stylesheet" href="style.css" /> -->
+  </head>
+  <body>
+    <div ng-controller="chartController">
+      <nvd3 options="options" data="data"></nvd3>
+    </div>
+    <script src="impressionByDays.js"></script>
+    <script src="chart.js"></script>
+  </body>
+</html>
