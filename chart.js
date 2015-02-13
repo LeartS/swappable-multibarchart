@@ -1,186 +1,106 @@
 angular.module('chart', ['nvd3'])
     .controller('chartController', function($scope) {
 
-        /* Chart data */
-        $scope.data = _.map(d, function(series) {
-            return {
-                key: series.key,
-                values: _.map(
-                    _.zip.apply(_, series.values),
-                    function(point) {
-                        return {x: new Date(point[0]), y: point[1]};
-                    }
-                )
-            };
-        });
+        /* Transform the data in a format handy for d3 */
+        $scope.rawData = _.reduce(
+            _.map(d, function(series) {
+                return {
+                    key: series.key,
+                    values: _.zip.apply(_, series.values),
+                };
+            }),
+            function(memo, series) {
+                return memo.concat(
+                    _.map(
+                        series.values,
+                        function(value) {
+                            return {
+                                'timestamp': value[0],
+                                'impressions': value[1],
+                                'entity': series.key
+                            };
+                        }
+                    )
+                );
+        }, []);
 
-        this.swapSeriesAndXAxis = function() {
-            
-        };
-        var numberFormatter = d3.format(',.2s');
-        console.log($scope.data);
         /* Chart options */
         $scope.options = {
             "chart": {
                 "type": "multiBarChart",
                 "height": 450,
-                "width": 1000,
+                "width": 1200,
                 "margin": {
                     "top": 20,
                     "right": 20,
-                    "bottom": 60,
-                    "left": 60
+                    "bottom": 80,
+                    "left": 80,
                 },
                 "clipEdge": true,
-                "staggerLabels": true,
-                "transitionDuration": 300,
+                "transitionDuration": 200,
                 "stacked": false,
-                "valueFormat": function(d) { return d.dasdsad.fasf89(); },
+                "y": function(d) { return d.impressions; },
                 "xAxis": {
                     "axisLabel": "Time (ms)",
-                    // "showMaxMin": false,
                     "orient": "bottom",
-                    "tickFormat": function(d) { return d.getDay(); },
-                    // "tickValues": null,
-                    // "tickSubdivide": 0,
-                    // "tickSize": 6,
-                    // "tickPadding": 7,
-                    // "domain": d3.extent($scope.data[2].values, function(d) { return d[0]; }),
-                    // "range": d3.extent($scope.data[2].values, function(d) { return d[0]; }),
-                    // "margin": {
-                    //     "top": 0,
-                    //     "right": 0,
-                    //     "bottom": 0,
-                    //     "left": 0
-                    // },
-                    // "width": 75,
-                    // "ticks": null,
-                    // "height": 60,
-                    // "highlightZero": true,
-                    // "rotateYLabel": true,
+                    "tickFormat": function(d) { return dateFormatter(d); },
                     "rotateLabels": -45,
-                    "staggerLabels": true,
-                    // "axisLabelDistance": 12
+                    "staggerLabels": false,
                 },
                 "yAxis": {
                     "axisLabel": "Impressions",
-                    "axisLabelDistance": 40,
                     "orient": "left",
                     "tickFormat": function(d) { return numberFormatter(d); },
-                    // "tickValues": null,
-                    // "tickSubdivide": 0,
-                    // "tickSize": 6,
-                    // "tickPadding": 3,
-                    "domain": [0, 1],
-                    "range": [0, 1],
-                    // "margin": {
-                    //     "top": 0,
-                    //     "right": 0,
-                    //     "bottom": 0,
-                    //     "left": 2000
-                    // },
-                    // "width": 705,
-                    // "ticks": null,
-                    // "height": 60,
-                    // "showMaxMin": true,
-                    // "highlightZero": true,
-                    // "rotateYLabel": true,
-                    // "rotateLabels": 0,
-                    // "staggerLabels": false
                 },
-                // "dispatch": {},
-                // "multibar": {
-                //     "dispatch": {},
-                //     "margin": {
-                //         "top": 0,
-                //         "right": 0,
-                //         "bottom": 0,
-                //         "left": 0
-                //     },
-                //     "width": 960,
-                //     "height": 500,
-                //     "forceY": [
-                //         0
-                //     ],
-                //     "stacked": false,
-                //     "stackOffset": "zero",
-                //     "clipEdge": true,
-                //     "barColor": null,
-                //     "id": 4896,
-                //     "hideable": false,
-                //     "delay": 1200,
-                //     "groupSpacing": 0.1
-                // },
-                // "legend": {
-                //     "dispatch": {},
-                //     "margin": {
-                //         "top": 5,
-                //         "right": 0,
-                //         "bottom": 5,
-                //         "left": 0
-                //     },
-                //     "width": 400,
-                //     "height": 20,
-                //     "align": true,
-                //     "rightAlign": true,
-                //     "updateState": true,
-                //     "radioButtonMode": false
-                // },
-                "forceY": [0],
-                "id": 4896,
-                "stackOffset": "zero",
-                "delay": 200,
-                "barColor": null,
+                "delay": 100,
                 "groupSpacing": 0.3,
                 "showControls": false,
                 "showLegend": true,
-                "showXAxis": true,
-                "showYAxis": true,
-                "rightAlignYAxis": false,
                 "reduceXTicks": true,
-                "rotateLabels": 0,
                 "tooltips": true,
                 "state": {
                     "stacked": false,
                     "disabled": [false, false, false]
                 },
-                "defaultState": null,
                 "noData": "No Data Available."
             },
-            // "title": {
-            //     "enable": false,
-            //     "text": "Write Your Title",
-            //     "class": "h4",
-            //     "css": {
-            //         "width": "nullpx",
-            //         "textAlign": "center"
-            //     }
-            // },
-            // "subtitle": {
-            //     "enable": false,
-            //     "text": "Write Your Subtitle",
-            //     "css": {
-            //         "width": "nullpx",
-            //         "textAlign": "center"
-            //     }
-            // },
-            // "caption": {
-            //     "enable": false,
-            //     "text": "Figure 1. Write Your Caption text.",
-            //     "css": {
-            //         "width": "nullpx",
-            //         "textAlign": "center"
-            //     }
-            // },
-            // "styles": {
-            //     "classes": {
-            //         "with-3d-shadow": true,
-            //         "with-transitions": true,
-            //         "gallery": false
-            //     },
-            //     "css": {}
-            // }
         };
+
+        var numberFormatter = d3.format(',.2s');
+        var dateFormatter = d3.time.format('%e %b');
+        xAccessorEntity = function(d) { return d.entity; };
+        xAccessorDate = function(d) { return new Date(d.timestamp); };
+
+        this.state = 'entity-as-series';
+
+        this.swapSeriesAndXAxis = function() {
+            if (this.state === 'entity-as-series') {
+                this.state = 'date-as-series';
+                $scope.options.chart.x = xAccessorEntity;
+                $scope.options.chart.xAxis.axisLabel = "Entity";
+                $scope.options.chart.xAxis.tickFormat = null;
+                $scope.options.chart.xAxis.rotateLabels = 0;
+                $scope.data = d3.nest()
+                    .key(function(d) {
+                        return dateFormatter(new Date(d.timestamp));
+                    }).entries($scope.rawData);
+            } else {
+                this.state = 'entity-as-series';
+                $scope.options.chart.x = xAccessorDate;
+                $scope.options.chart.xAxis.axisLabel = "Date";
+                $scope.options.chart.xAxis.tickFormat = function(d) {
+                    return dateFormatter(d);
+                };
+                $scope.options.chart.xAxis.rotateLabels = -45;
+                $scope.data = d3.nest()
+                    .key(function(d) {
+                        return d.entity;
+                    }).entries($scope.rawData);
+            }
+            console.log($scope.options);
+
+        };
+        this.swapSeriesAndXAxis();
 
         console.log($scope.options);
 
