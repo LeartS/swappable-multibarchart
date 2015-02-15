@@ -1,6 +1,8 @@
 angular.module('chart', ['nvd3'])
     .controller('chartController', function($scope) {
 
+        var colorScale = d3.scale.category20().domain(_.pluck(d, 'key'));
+
         /* Transform the data in a format handy for d3 */
         $scope.rawData = _.reduce(
             _.map(d, function(series) {
@@ -17,7 +19,8 @@ angular.module('chart', ['nvd3'])
                             return {
                                 'timestamp': value[0],
                                 'impressions': value[1],
-                                'entity': series.key
+                                'entity': series.key,
+                                'color': colorScale(series.key),
                             };
                         }
                     )
@@ -71,7 +74,7 @@ angular.module('chart', ['nvd3'])
         xAccessorEntity = function(d) { return d.entity; };
         xAccessorDate = function(d) { return new Date(d.timestamp); };
 
-        this.state = 'entity-as-series';
+        this.state = 'date-as-series';
 
         this.swapSeriesAndXAxis = function() {
             if (this.state === 'entity-as-series') {
@@ -80,6 +83,7 @@ angular.module('chart', ['nvd3'])
                 $scope.options.chart.xAxis.axisLabel = "Entity";
                 $scope.options.chart.xAxis.tickFormat = null;
                 $scope.options.chart.xAxis.rotateLabels = 0;
+                $scope.options.chart.showLegend = false;
                 $scope.data = d3.nest()
                     .key(function(d) {
                         return dateFormatter(new Date(d.timestamp));
@@ -92,6 +96,7 @@ angular.module('chart', ['nvd3'])
                     return dateFormatter(d);
                 };
                 $scope.options.chart.xAxis.rotateLabels = -45;
+                $scope.options.chart.showLegend = true;
                 $scope.data = d3.nest()
                     .key(function(d) {
                         return d.entity;
